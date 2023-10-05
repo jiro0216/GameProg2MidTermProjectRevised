@@ -6,7 +6,6 @@ public class BulletScript : MonoBehaviour
 
     public float speed = 70f;
 
-    public GameObject impactEffect;
 
     public void Seek(Transform _target)
     {
@@ -39,8 +38,7 @@ public class BulletScript : MonoBehaviour
     void HitTarget()
     {
 
-        GameObject effectsIns = (GameObject)Instantiate(impactEffect, transform.position, transform.rotation);
-        Destroy(effectsIns, 2f);
+   
         Destroy(gameObject);
     }
 
