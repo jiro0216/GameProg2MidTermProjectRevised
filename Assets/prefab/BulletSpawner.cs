@@ -14,6 +14,7 @@ public class BulletSpawner : MonoBehaviour
     public float rotSpeed;
     public float shootingRadius;
     private bool isEnemyInRange = false;
+    public GameManager gameManager;
     [SerializeField] private float SpawnTimer;
     public GameObject PlayerBullet;
 
@@ -24,31 +25,35 @@ public class BulletSpawner : MonoBehaviour
     void Start()
     {
         SpawnTimer = Random.Range(spawnMin, spawnMax);
-       
+
     }
     // Update is called once per frame
     void Update()
     {
-        //PlayerAutoShoot();
-        //RotatesTowardsEnemy();
-        //OnDrawGizmos();
-        float distanceToPlayer = Vector3.Distance(transform.position, BulletDirectionPlayer.position);
+
+        if (BulletDirectionPlayer != null)
+        {
+            float distanceToPlayer = Vector3.Distance(transform.position, BulletDirectionPlayer.position);
+
+            // Check if the player is within the shooting range
+            if (distanceToPlayer <= shootingRadius)
+            {
+                isEnemyInRange = true;
+                RotatesTowardsEnemy();
+            }
+            else
+            {
+                isEnemyInRange = false;
+            }
+
+            if (isEnemyInRange)
+            {
+                PlayerAutoShoot();
+            }
+        }
 
         // Check if the player is within the shooting range
-        if (distanceToPlayer <= shootingRadius)
-        {
-            isEnemyInRange = true;
-            RotatesTowardsEnemy();
-        }
-        else
-        {
-            isEnemyInRange = false;
-        }
-
-        if (isEnemyInRange)
-        {
-            PlayerAutoShoot();
-        }
+       
     }
 
     void PlayerAutoShoot()
@@ -62,13 +67,14 @@ public class BulletSpawner : MonoBehaviour
             Rigidbody BulletRB = PlayerBullet1.GetComponent<Rigidbody>();
             if (BulletRB != null)
             {
-                BulletRB.velocity = BulletDirection * BulletSpeed;   
+                BulletRB.velocity = BulletDirection * BulletSpeed;
             }
+            
             Destroy(PlayerBullet1, 5f);
 
             SpawnTimer = Random.Range(spawnMin, spawnMax);
         }
-        
+
 
     }
 
@@ -79,9 +85,22 @@ public class BulletSpawner : MonoBehaviour
         float step = rotSpeed * Time.deltaTime;
         transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, step);
     }
-    void OnDrawGizmos() 
+    void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position,shootingRadius);
+        Gizmos.DrawWireSphere(transform.position, shootingRadius);
     }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Enemy"))
+        {
+            // Game over condition: When the turret collides with an enemy.
+            gameManager.GameOver();
+
+        }
+
+    }// SA PLAYER ITO
 }
+
+    

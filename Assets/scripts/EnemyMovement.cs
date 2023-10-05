@@ -2,28 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyMovement : MonoBehaviour
-
+public class EnemyScript : MonoBehaviour
 {
-    public Transform EnemyMovementA;
+    public Transform player; // Reference to the player's transform
     public float speed;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
     void Update()
     {
-        WalkTowardsPlayer();
+        MoveTowardsPlayer();
     }
 
-    void WalkTowardsPlayer() 
+    void MoveTowardsPlayer()
     {
-        transform.Translate(Vector3.back * speed * Time.deltaTime); // game object movement  
-        transform.position = Vector3.MoveTowards(transform.position, EnemyMovementA.position, speed * Time.deltaTime); // makes the game object moves towards a specific position
+        if (player != null) // Check if the player reference is valid
+        {
+            // Calculate the direction from the enemy to the player
+            Vector3 directionToPlayer = (player.position - transform.position).normalized;
+
+            // Move the enemy in the direction of the player
+            transform.Translate(directionToPlayer * speed * Time.deltaTime);
+        }
     }
-
-
 }
